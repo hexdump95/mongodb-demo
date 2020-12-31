@@ -6,7 +6,7 @@ public class AuthorDto implements Serializable {
 
 	private String firstName;
 	private String lastName;
-
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -30,4 +30,10 @@ public class AuthorDto implements Serializable {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
+
+	@Override
+	public String toString() {
+		return "AuthorDto [firstName=" + firstName + ", lastName=" + lastName + "]";
+	}
+
 }
