@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.mycompany.demo.documents.Author;
 import com.mycompany.demo.dtos.AuthorDto;
 import com.mycompany.demo.repositories.AuthorRepository;
+import com.mycompany.demo.services.AuthorService;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,62 +36,33 @@ public class AuthorController {
 	@Autowired
 	private AuthorRepository repo;
 
+	@Autowired
+	private AuthorService service;
+
 	@GetMapping(path = "")
 	public ResponseEntity<Flux<AuthorDto>> getAuthors() {
-
-		return ResponseEntity.status(HttpStatus.OK).body(repo.findAll().map(a -> {
-			ModelMapper modelMapper = new ModelMapper();
-			AuthorDto authorDto = modelMapper.map(a, AuthorDto.class);
-			return authorDto;
-		}));
+		return ResponseEntity.ok(service.findAll());
 	}
 
 	@GetMapping(path = "/{id}")
-	public Mono<ResponseEntity<AuthorDto>> getAuthor(@PathVariable("id") String id) {
-
-		return this.repo.findById(id)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found")))
-				.map(a -> {
-					ModelMapper modelMapper = new ModelMapper();
-					AuthorDto authorDto = modelMapper.map(a, AuthorDto.class);
-					return ResponseEntity.ok(authorDto);
-				});
+	public ResponseEntity<Mono<AuthorDto>> getAuthor(@PathVariable("id") String id) {
+		return ResponseEntity.ok(service.findOne(id));
 	}
 
 	@PostMapping(path = "")
-	public Mono<ResponseEntity<AuthorDto>> postAuthor(@RequestBody AuthorDto authorDto) {
-
-		ModelMapper modelMapper = new ModelMapper();
-		Author author = modelMapper.map(authorDto, Author.class);
-
-		return repo.save(author).map(a -> {
-			AuthorDto responseDto = modelMapper.map(a, AuthorDto.class);
-			return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
-		});
+	public ResponseEntity<Mono<AuthorDto>> postAuthor(@RequestBody AuthorDto authorDto) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(service.save(authorDto));
 
 	}
 
 	@PutMapping(path = "/{id}")
-	public Mono<ResponseEntity<Author>> updateAuthor(@PathVariable String id, @RequestBody AuthorDto authorDto) {
-		
-//		ModelMapper modelMapper = new ModelMapper();
-
-		return repo.findById(id)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found")))
-				.flatMap(a -> {
-//			a = modelMapper.map(authorDto, Author.class);
-					a.setFirstName(authorDto.getFirstName());
-					a.setLastName(authorDto.getLastName());
-					return repo.save(a);
-				}).map(a -> ResponseEntity.ok(a));
-
+	public ResponseEntity<Mono<AuthorDto>> updateAuthor(@PathVariable String id, @RequestBody AuthorDto authorDto) {
+		return ResponseEntity.status(HttpStatus.OK).body(service.update(id, authorDto));
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public Mono<ResponseEntity<?>> deleteAuthor(@PathVariable String id) {
-		return repo.findById(id)
-				.switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found")))
-				.flatMap(a -> repo.delete(a).then(Mono.just(ResponseEntity.status(HttpStatus.NO_CONTENT).body(""))));
+	public ResponseEntity<Mono<String>> deleteAuthor(@PathVariable String id) {
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body(service.delete(id));
 	}
 
 }
