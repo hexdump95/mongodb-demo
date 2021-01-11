@@ -26,14 +26,14 @@ public class AuthorRoute {
 				.andRoute(RequestPredicates.GET(baseUrl + "/{id}").and(RequestPredicates.accept(APPLICATION_JSON)),
 						authorHandler::findOne)
 
-				.andRoute(RequestPredicates.POST(baseUrl).and(RequestPredicates.accept(APPLICATION_JSON)),
-						authorHandler::save)
+//				.andRoute(RequestPredicates.POST(baseUrl).and(RequestPredicates.accept(APPLICATION_JSON)),
+//						authorHandler::save)
 
-				.andRoute(RequestPredicates.PUT(baseUrl + "/{id}").and(RequestPredicates.accept(APPLICATION_JSON)),
-						authorHandler::update)
+//				.andRoute(RequestPredicates.PUT(baseUrl + "/{id}").and(RequestPredicates.accept(APPLICATION_JSON)),
+//						authorHandler::update)
 
-				.andRoute(RequestPredicates.DELETE(baseUrl + "/{id}").and(RequestPredicates.accept(APPLICATION_JSON)),
-						authorHandler::delete)
+//				.andRoute(RequestPredicates.DELETE(baseUrl + "/{id}").and(RequestPredicates.accept(APPLICATION_JSON)),
+//						authorHandler::delete)
 		;
 	}
 }
